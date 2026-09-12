@@ -421,7 +421,42 @@
         Decline-class base rate
       </div>
     </div>
+    <h3>Model vs Baseline</h3>
 
+    <p>
+      The following figure compares the Logistic Regression model with the
+      rule-based baseline on the same stratified 80/20 development holdout.
+    </p>
+
+    <img
+      src="work/figures/model_vs_baseline.png"
+      alt="Model versus rule-based baseline comparison"
+      style="display:block; max-width:100%; height:auto; margin:20px auto;"
+    >
+
+    <p>
+      Logistic Regression achieved higher ROC-AUC and Average Precision than
+      the rule-based baseline on the development holdout.
+    </p>
+
+
+    <h3>Validation Sensitivity</h3>
+
+    <p>
+      The second figure compares model performance under the stratified
+      holdout and the stricter client-grouped validation design.
+    </p>
+
+    <img
+      src="work/figures/validation_sensitivity.png"
+      alt="Validation sensitivity comparison"
+      style="display:block; max-width:100%; height:auto; margin:20px auto;"
+    >
+
+    <p>
+      Performance decreased under client-grouped validation, showing that the
+      measured result is sensitive to validation design.
+    </p>
     <h3>Client-grouped validation</h3>
 
     <table>
