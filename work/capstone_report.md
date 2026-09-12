@@ -41,3 +41,48 @@ Because these errors have different costs, the model is used as a prioritization
 A rule-based approach can provide a transparent starting point, but a machine-learning model can combine multiple observed content, traffic, engagement, freshness, and search-performance signals into a single ranking score.
 
 This analysis therefore compares Logistic Regression with a rule-based baseline to determine whether the model provides additional directional ranking signal for prioritizing human review.
+
+## 2. Data Safety
+
+### Data used
+
+The analysis uses the public-safe FlyRank ML Internship starter dataset containing **30,000 rows and 44 columns**.
+
+The model uses 19 observed features covering:
+
+- Traffic and visibility
+- User engagement
+- Content freshness
+- Content length
+- Search performance
+- AI traffic and scroll activity
+
+### Target definition
+
+The target is derived from the provided `trend_direction` field. Pages where `trend_direction = down` are assigned to the decline class.
+
+The target-defining fields are not used as model inputs.
+
+### Leakage controls
+
+The following fields were excluded from the model features because they are directly related to the outcome definition:
+
+- `trend_direction`
+- `trend_pct`
+- `target`
+
+A feature-level leakage audit confirmed that these fields were not included among the 19 model features.
+
+The leakage audit reduces the risk of directly exposing the target to the model, but it does not prove that every possible source of bias or leakage is absent.
+
+### Client identifiers
+
+The `client_id` field is used only for the client-grouped validation design. It is not used as a model feature.
+
+Client-grouped validation ensures that clients do not overlap between the training and test sets, providing a stricter check of generalization to unseen clients.
+
+### Public-safe handling
+
+No client names, private search queries, credentials, or other client-identifying details are included in the analysis or report.
+
+The findings are presented as measured and directional evidence from the internship dataset and are not used to make claims about Google's ranking algorithm.
