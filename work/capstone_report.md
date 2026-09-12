@@ -86,3 +86,36 @@ Client-grouped validation ensures that clients do not overlap between the traini
 No client names, private search queries, credentials, or other client-identifying details are included in the analysis or report.
 
 The findings are presented as measured and directional evidence from the internship dataset and are not used to make claims about Google's ranking algorithm.
+
+## 3. Baseline
+
+A transparent rule-based baseline was used as the reference method for evaluating whether Logistic Regression added useful ranking signal.
+
+The baseline combines four signals:
+
+1. **Visibility score** — percentile rank of `log1p(impressions_90d)`.
+2. **Freshness risk score** — percentile rank of `days_since_last_update`.
+3. **Search-position opportunity** — based on normalized `avg_position`, weighted by visibility.
+4. **Content-depth gap** — based on the relative position of `word_count`, weighted by visibility.
+
+The final baseline score is calculated as:
+
+- 40% visibility
+- 30% freshness
+- 25% search-position opportunity
+- 5% content-depth gap
+
+The resulting score is clipped to the range 0 to 1 and used to rank pages for review.
+
+### Baseline comparison
+
+The baseline and Logistic Regression model were evaluated on the same stratified 80/20 development test set using the same metrics.
+
+| Method | ROC-AUC | Average Precision |
+|---|---:|---:|
+| Rule-based baseline | 0.5787 | 0.5699 |
+| Logistic Regression | 0.6777 | 0.6945 |
+
+The Logistic Regression model improved over the baseline by **+0.0990 ROC-AUC** and **+0.1246 Average Precision** on this development holdout.
+
+This comparison indicates measured additional ranking signal from the model on the development dataset, while not establishing production or future performance.
