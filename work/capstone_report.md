@@ -162,3 +162,60 @@ Pages where:
 
 ```text
 trend_direction = down
+
+## 5. Evaluation
+
+### Evaluation metrics
+
+The analysis uses **ROC-AUC** and **Average Precision** because the objective is to rank pages for review rather than make an automatic production decision.
+
+On the stratified 80/20 development holdout, Logistic Regression achieved:
+
+- ROC-AUC: **0.6777**
+- Average Precision: **0.6945**
+
+The decline-class base rate in the dataset is approximately **54.21%**.
+
+### Model vs baseline
+
+The Logistic Regression model was compared with the rule-based baseline on the same test set.
+
+| Method | ROC-AUC | Average Precision |
+|---|---:|---:|
+| Rule-based baseline | 0.5787 | 0.5699 |
+| Logistic Regression | 0.6777 | 0.6945 |
+
+The model therefore measured an improvement of:
+
+- **+0.0990 ROC-AUC**
+- **+0.1246 Average Precision**
+
+### Client-grouped validation
+
+A stricter validation design was used to test generalization to unseen clients.
+
+| Validation design | ROC-AUC | Average Precision |
+|---|---:|---:|
+| Stratified holdout | 0.6777 | 0.6945 |
+| Client-grouped split | 0.5950 | 0.5939 |
+
+Performance decreased by **0.0826 ROC-AUC** and **0.1007 Average Precision** under client-grouped validation.
+
+This indicates that the measured performance is sensitive to validation design and that patterns specific to individual clients may contribute to the stronger result observed on the stratified holdout.
+
+### Error analysis
+
+On the stratified test set, the model produced:
+
+- **1,226 false positives**
+- **935 false negatives**
+
+False positives represent pages prioritized as declining that were not in the decline class, while false negatives represent declining pages that were not prioritized by the model.
+
+The error analysis reinforces that the model should be used to prioritize human review rather than to make automatic content decisions.
+
+### Interpretation of evaluation
+
+The results provide measured evidence that Logistic Regression adds ranking signal over the rule-based baseline on the development holdout.
+
+However, the lower client-grouped performance shows that this result should be treated as **directional decision-support**, not as guaranteed future performance or production-level accuracy.
