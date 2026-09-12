@@ -219,3 +219,38 @@ The error analysis reinforces that the model should be used to prioritize human 
 The results provide measured evidence that Logistic Regression adds ranking signal over the rule-based baseline on the development holdout.
 
 However, the lower client-grouped performance shows that this result should be treated as **directional decision-support**, not as guaranteed future performance or production-level accuracy.
+
+## 6. Interpretation
+
+### What the model found
+
+The Logistic Regression model combines multiple observed signals to produce a directional decline-risk score. The strongest model coefficients on the development data included:
+
+| Feature | Coefficient |
+|---|---:|
+| `users_90d` | -1.2520 |
+| `sessions_90d` | +1.1133 |
+| `days_with_impressions` | +0.6193 |
+| `word_count` | +0.4617 |
+| `days_with_sessions` | -0.4545 |
+| `content_age_days` | -0.3285 |
+| `char_count` | -0.3074 |
+| `scroll_events_90d` | +0.2391 |
+| `days_since_last_update` | +0.1547 |
+| `avg_position` | -0.1309 |
+
+These coefficients describe the directional contribution of each standardized feature within the fitted model. They should not be interpreted as causal effects.
+
+### Key observations
+
+The model indicates that several traffic, engagement, content, and freshness variables contribute to the ranking signal. The relatively large coefficients for `users_90d` and `sessions_90d` show that traffic-related features have substantial influence within the fitted model.
+
+Freshness-related variables such as `days_since_last_update` and `content_age_days` also contribute to the model, supporting their use as review signals alongside traffic and search-performance measures.
+
+### Important interpretation caution
+
+The coefficients represent associations learned from the available dataset. They do not establish that changing any individual feature will cause a page to stop declining.
+
+The lower performance under client-grouped validation is also an important finding. It shows that the apparent model signal is not equally strong under every validation design.
+
+Therefore, the results should be interpreted as **observed and directional evidence for prioritization**, rather than causal explanations of content performance or predictions of Google's ranking algorithm.
