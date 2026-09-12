@@ -119,3 +119,46 @@ The baseline and Logistic Regression model were evaluated on the same stratified
 The Logistic Regression model improved over the baseline by **+0.0990 ROC-AUC** and **+0.1246 Average Precision** on this development holdout.
 
 This comparison indicates measured additional ranking signal from the model on the development dataset, while not establishing production or future performance.
+
+## 4. Model / Analysis
+
+### Model
+
+The analysis uses **Logistic Regression** as the main classification model because it provides a simple and interpretable approach for combining multiple observed signals into a decline-risk score.
+
+Numeric features were standardized before fitting the Logistic Regression model.
+
+### Input features
+
+The model uses 19 features:
+
+- `impressions_90d`
+- `clicks_90d`
+- `pageviews_90d`
+- `sessions_90d`
+- `users_90d`
+- `engaged_sessions_90d`
+- `ai_sessions_90d`
+- `scroll_events_90d`
+- `days_with_impressions`
+- `days_with_sessions`
+- `content_age_days`
+- `days_since_last_update`
+- `word_count`
+- `char_count`
+- `ctr`
+- `avg_position`
+- `engagement_rate`
+- `scroll_rate`
+- `ai_traffic_pct`
+
+These features represent observed content, traffic, engagement, freshness, and search-performance signals.
+
+### Target
+
+The binary target represents whether a page is classified as declining.
+
+Pages where:
+
+```text
+trend_direction = down
