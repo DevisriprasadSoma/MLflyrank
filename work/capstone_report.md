@@ -289,3 +289,47 @@ The ranked score is a prioritization signal rather than a final content decision
 Pages should not be automatically deleted, redirected, rewritten, or published solely because of the model score.
 
 The workflow is intended to support efficient human review and provide directional decision-support. Its usefulness should be monitored over time, particularly if the underlying data distribution or content environment changes.
+
+## 8. Reproducibility
+
+The analysis is organized in the `work/` directory of the MLflyrank repository.
+
+### Repository structure
+
+The main reproducible artifacts include:
+
+- `work/notebooks/` — weekly analysis notebooks and the capstone notebook.
+- `work/capstone.ipynb` — final capstone analysis and paper preparation.
+- `work/capstone_report.md` — this report.
+- `work/capstone_report_template.md` — report template.
+- `work/figures/` — figures used to communicate the model and validation results.
+- `work/outputs/` — generated validation metrics and the ranked action queue.
+
+### Analysis sequence
+
+The analysis was developed progressively across the weekly notebooks, including:
+
+1. Research question and task framing
+2. Data contract and leakage checks
+3. Rule-based baseline
+4. Signal audit
+5. Logistic Regression model
+6. Validation audit
+7. Action playbook
+8. Final capstone report and storytelling
+
+The main model evaluation uses an 80/20 stratified split with **random state 42**. A separate client-grouped validation design was used to evaluate generalization to unseen clients.
+
+### Reproducibility checks
+
+The analysis includes a feature-level leakage audit confirming that `trend_direction`, `trend_pct`, and `target` were excluded from the model features.
+
+The final outputs include:
+
+- Model-versus-baseline comparison
+- Client-grouped validation results
+- Validation metrics
+- Top-50 ranked action queue
+- Model and validation figures
+
+The reported results should be reproduced from the notebooks and repository artifacts rather than treated as independently verified production results.
