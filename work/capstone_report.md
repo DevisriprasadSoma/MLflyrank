@@ -254,3 +254,38 @@ The coefficients represent associations learned from the available dataset. They
 The lower performance under client-grouped validation is also an important finding. It shows that the apparent model signal is not equally strong under every validation design.
 
 Therefore, the results should be interpreted as **observed and directional evidence for prioritization**, rather than causal explanations of content performance or predictions of Google's ranking algorithm.
+
+## 7. Recommendation
+
+### Ranked review workflow
+
+The model output is converted into a ranked review queue so that content teams can focus limited review effort on higher-priority pages first.
+
+The recommended workflow is:
+
+1. **Review high-risk pages first** using the model's ranked decline-risk score.
+2. **Check content freshness** when a page has not been updated for a long period.
+3. **Review search position and intent** when a page has weaker search visibility.
+4. **Review engagement** when user engagement signals are comparatively low.
+5. **Review content depth and completeness** when content is relatively short or incomplete.
+6. **Make the final decision through human review**, considering business importance, search intent, factual accuracy, and overall content quality.
+
+### Action categories
+
+The ML-10 action queue assigns reason codes to help explain why a page was prioritized:
+
+- `STALE_CONTENT` — long time since the last update.
+- `SEARCH_POSITION` — weaker search position.
+- `LOW_ENGAGEMENT` — relatively low engagement.
+- `CONTENT_DEPTH` — relatively low content depth.
+- `MODEL_RISK` — elevated model-based decline risk without another primary reason code.
+
+The resulting queue contains the **top 50 ranked pages** for review.
+
+### Human review and confidence limits
+
+The ranked score is a prioritization signal rather than a final content decision. Reviewers should consider additional information that is not represented by the model before taking action.
+
+Pages should not be automatically deleted, redirected, rewritten, or published solely because of the model score.
+
+The workflow is intended to support efficient human review and provide directional decision-support. Its usefulness should be monitored over time, particularly if the underlying data distribution or content environment changes.
