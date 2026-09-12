@@ -1,1 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Content Refresh Opportunity Scoring | FlyRank ML Capstone</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+      color: #222;
+      background: #f5f7fa;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 45px 30px;
+      border-radius: 14px;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      margin-top: 0;
+      font-size: 34px;
+    }
+
+    header p {
+      color: #d1d5db;
+      font-size: 17px;
+    }
+
+    section {
+      background: white;
+      padding: 30px;
+      margin-bottom: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      color: #111827;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      color: #374151;
+      margin-top: 25px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .metric {
+      background: #f3f4f6;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 28px;
+      color: #111827;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background: #f3f4f6;
+    }
+
+    code {
+      background: #f1f5f9;
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
+
+    .warning {
+      background: #fff7ed;
+      border-left: 5px solid #f97316;
+      padding: 18px;
+      margin: 20px 0;
+    }
+
+    .success {
+      background: #f0fdf4;
+      border-left: 5px solid #22c55e;
+      padding: 18px;
+      margin: 20px 0;
+    }
+
+    a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      padding: 30px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 26px;
+      }
+
+      section {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>Content Refresh Opportunity Scoring</h1>
+    <p>
+      Google Search Ranking & Discoverability Capstone —
+      FlyRank ML Internship
+    </p>
+    <p>
+      Machine Learning Track | Logistic Regression |
+      Content Refresh / Opportunity Scoring
+    </p>
+  </header>
+
+
+  <section>
+    <h2>0. Abstract</h2>
+
+    <p>
+      This study evaluates whether a simple Logistic Regression model can
+      provide useful directional signal for prioritizing content pages that
+      may be at risk of declining compared with a transparent rule-based
+      baseline. Using the public-safe FlyRank ML Internship dataset, the
+      analysis uses 19 observed content, traffic, engagement, freshness, and
+      search-performance features to classify pages labeled as declining.
+      On the stratified 80/20 development holdout, Logistic Regression
+      achieved a ROC-AUC of <strong>0.6777</strong> and Average Precision of
+      <strong>0.6945</strong>, compared with <strong>0.5787</strong> and
+      <strong>0.5699</strong> for the rule-based baseline. Under client-grouped
+      validation, performance decreased to <strong>0.5950 ROC-AUC</strong> and
+      <strong>0.5939 Average Precision</strong>, showing that the measured
+      result is sensitive to validation design. The resulting ranked scores
+      are intended as directional decision-support for prioritizing human
+      review of pages for possible refresh or improvement, not as automatic
+      content decisions or predictions of Google's ranking algorithm.
+    </p>
+  </section>
+
+
+  <section>
+    <h2>1. Problem Framing</h2>
+
+    <h3>Decision supported</h3>
+    <p>
+      The analysis supports a content-team decision:
+      <strong>which pages should be reviewed first for possible refresh or
+      improvement?</strong>
+    </p>
+
+    <p>
+      The goal is to prioritize limited human review effort using a measurable
+      ranking signal rather than manually reviewing every page with the same
+      priority.
+    </p>
+
+    <h3>Unit of analysis</h3>
+    <p>
+      The unit of analysis is an individual content page represented by one
+      row in the FlyRank ML Internship dataset.
+    </p>
+
+    <h3>Model output</h3>
+    <p>
+      The model produces a decline-risk score for each page. Pages can then
+      be ranked from higher to lower priority for human review.
+    </p>
+
+    <h3>Human action</h3>
+    <ul>
+      <li>Content freshness</li>
+      <li>Search position</li>
+      <li>User engagement</li>
+      <li>Content depth</li>
+      <li>Overall content quality and search intent</li>
+    </ul>
+
+    <p>The final decision remains with a human reviewer.</p>
+
+    <h3>Why machine learning helps</h3>
+    <p>
+      A rule-based approach can provide a transparent starting point, but a
+      machine-learning model can combine multiple observed content, traffic,
+      engagement, freshness, and search-performance signals into a single
+      ranking score.
+    </p>
+  </section>
+
+
+  <section>
+    <h2>2. Data Safety</h2>
+
+    <p>
+      The analysis uses the public-safe FlyRank ML Internship starter dataset
+      containing <strong>30,000 rows and 44 columns</strong>.
+    </p>
+
+    <p>The model uses 19 observed features covering:</p>
+
+    <ul>
+      <li>Traffic and visibility</li>
+      <li>User engagement</li>
+      <li>Content freshness</li>
+      <li>Content length</li>
+      <li>Search performance</li>
+      <li>AI traffic and scroll activity</li>
+    </ul>
+
+    <h3>Target definition</h3>
+
+    <p>
+      Pages where <code>trend_direction = down</code> are assigned to the
+      decline class. The target-defining fields are not used as model inputs.
+    </p>
+
+    <h3>Leakage controls</h3>
+
+    <ul>
+      <li><code>trend_direction</code></li>
+      <li><code>trend_pct</code></li>
+      <li><code>target</code></li>
+    </ul>
+
+    <p>
+      These fields were excluded from the model features. A feature-level
+      leakage audit confirmed that they were not included among the 19 model
+      features.
+    </p>
+
+    <h3>Client identifiers</h3>
+
+    <p>
+      The <code>client_id</code> field is used only for client-grouped
+      validation and is not used as a model feature.
+    </p>
+
+    <p>
+      No client names, private search queries, credentials, or other
+      client-identifying details are included in the analysis or report.
+    </p>
+  </section>
+
+
+  <section>
+    <h2>3. Baseline</h2>
+
+    <p>
+      A transparent rule-based baseline was used as the reference method for
+      evaluating whether Logistic Regression added useful ranking signal.
+    </p>
+
+    <ol>
+      <li>Visibility score — percentile rank of <code>log1p(impressions_90d)</code>.</li>
+      <li>Freshness risk score — percentile rank of <code>days_since_last_update</code>.</li>
+      <li>Search-position opportunity — based on normalized <code>avg_position</code>, weighted by visibility.</li>
+      <li>Content-depth gap — based on the relative position of <code>word_count</code>, weighted by visibility.</li>
+    </ol>
+
+    <p>The baseline weights are:</p>
+
+    <ul>
+      <li>40% visibility</li>
+      <li>30% freshness</li>
+      <li>25% search-position opportunity</li>
+      <li>5% content-depth gap</li>
+    </ul>
+
+    <h3>Baseline comparison</h3>
+
+    <table>
+      <tr>
+        <th>Method</th>
+        <th>ROC-AUC</th>
+        <th>Average Precision</th>
+      </tr>
+      <tr>
+        <td>Rule-based baseline</td>
+        <td>0.5787</td>
+        <td>0.5699</td>
+      </tr>
+      <tr>
+        <td><strong>Logistic Regression</strong></td>
+        <td><strong>0.6777</strong></td>
+        <td><strong>0.6945</strong></td>
+      </tr>
+    </table>
+
+    <div class="success">
+      Logistic Regression measured an improvement of
+      <strong>+0.0990 ROC-AUC</strong> and
+      <strong>+0.1246 Average Precision</strong> over the baseline on the
+      development holdout.
+    </div>
+  </section>
+
+
+  <section>
+    <h2>4. Model / Analysis</h2>
+
+    <h3>Model</h3>
+
+    <p>
+      The analysis uses <strong>Logistic Regression</strong> as the main
+      classification model because it provides a simple and interpretable
+      approach for combining multiple observed signals into a decline-risk
+      score.
+    </p>
+
+    <p>Numeric features were standardized before fitting the model.</p>
+
+    <h3>Input features</h3>
+
+    <p>The model uses 19 features:</p>
+
+    <ul>
+      <li><code>impressions_90d</code></li>
+      <li><code>clicks_90d</code></li>
+      <li><code>pageviews_90d</code></li>
+      <li><code>sessions_90d</code></li>
+      <li><code>users_90d</code></li>
+      <li><code>engaged_sessions_90d</code></li>
+      <li><code>ai_sessions_90d</code></li>
+      <li><code>scroll_events_90d</code></li>
+      <li><code>days_with_impressions</code></li>
+      <li><code>days_with_sessions</code></li>
+      <li><code>content_age_days</code></li>
+      <li><code>days_since_last_update</code></li>
+      <li><code>word_count</code></li>
+      <li><code>char_count</code></li>
+      <li><code>ctr</code></li>
+      <li><code>avg_position</code></li>
+      <li><code>engagement_rate</code></li>
+      <li><code>scroll_rate</code></li>
+      <li><code>ai_traffic_pct</code></li>
+    </ul>
+
+    <h3>Target</h3>
+
+    <p>
+      Pages where <code>trend_direction = down</code> are assigned to the
+      decline class (<strong>1</strong>); other pages are assigned to the
+      non-decline class (<strong>0</strong>).
+    </p>
+
+    <p>
+      The fields <code>trend_direction</code>, <code>trend_pct</code>, and
+      <code>target</code> are excluded from the model features to reduce the
+      risk of direct label leakage.
+    </p>
+  </section>
+
+
+  <section>
+    <h2>5. Evaluation</h2>
+
+    <h3>Evaluation metrics</h3>
+
+    <p>
+      The analysis uses <strong>ROC-AUC</strong> and
+      <strong>Average Precision</strong> because the objective is to rank
+      pages for review rather than make an automatic production decision.
+    </p>
+
+    <div class="metric-grid">
+      <div class="metric">
+        <strong>0.6777</strong>
+        ROC-AUC
+      </div>
+
+      <div class="metric">
+        <strong>0.6945</strong>
+        Average Precision
+      </div>
+
+      <div class="metric">
+        <strong>54.21%</strong>
+        Decline-class base rate
+      </div>
+    </div>
+
+    <h3>Client-grouped validation</h3>
+
+    <table>
+      <tr>
+        <th>Validation design</th>
+        <th>ROC-AUC</th>
+        <th>Average Precision</th>
+      </tr>
+      <tr>
+        <td>Stratified holdout</td>
+        <td>0.6777</td>
+        <td>0.6945</td>
+      </tr>
+      <tr>
+        <td>Client-grouped split</td>
+        <td>0.5950</td>
+        <td>0.5939</td>
+      </tr>
+    </table>
+
+    <p>
+      Performance decreased by <strong>0.0826 ROC-AUC</strong> and
+      <strong>0.1007 Average Precision</strong> under client-grouped
+      validation.
+    </p>
+
+    <h3>Error analysis</h3>
+
+    <ul>
+      <li><strong>1,226</strong> false positives</li>
+      <li><strong>935</strong> false negatives</li>
+    </ul>
+
+    <div class="warning">
+      The lower client-grouped performance shows that the result is sensitive
+      to validation design. The model should therefore be treated as
+      directional decision-support rather than guaranteed future or production
+      performance.
+    </div>
+  </section>
+
+
+  <section>
+    <h2>6. Interpretation</h2>
+
+    <h3>Strongest model coefficients</h3>
+
+    <table>
+      <tr>
+        <th>Feature</th>
+        <th>Coefficient</th>
+      </tr>
+      <tr><td><code>users_90d</code></td><td>-1.2520</td></tr>
+      <tr><td><code>sessions_90d</code></td><td>+1.1133</td></tr>
+      <tr><td><code>days_with_impressions</code></td><td>+0.6193</td></tr>
+      <tr><td><code>word_count</code></td><td>+0.4617</td></tr>
+      <tr><td><code>days_with_sessions</code></td><td>-0.4545</td></tr>
+      <tr><td><code>content_age_days</code></td><td>-0.3285</td></tr>
+      <tr><td><code>char_count</code></td><td>-0.3074</td></tr>
+      <tr><td><code>scroll_events_90d</code></td><td>+0.2391</td></tr>
+      <tr><td><code>days_since_last_update</code></td><td>+0.1547</td></tr>
+      <tr><td><code>avg_position</code></td><td>-0.1309</td></tr>
+    </table>
+
+    <p>
+      These coefficients describe the directional contribution of each
+      standardized feature within the fitted model. They should not be
+      interpreted as causal effects.
+    </p>
+
+    <p>
+      Traffic, engagement, content, and freshness variables all contribute to
+      the ranking signal. The lower client-grouped performance is an important
+      finding because it shows that the apparent model signal is not equally
+      strong under every validation design.
+    </p>
+  </section>
+
+
+  <section>
+    <h2>7. Recommendation</h2>
+
+    <h3>Ranked review workflow</h3>
+
+    <ol>
+      <li>Review high-risk pages first using the ranked decline-risk score.</li>
+      <li>Check content freshness.</li>
+      <li>Review search position and intent.</li>
+      <li>Review user engagement.</li>
+      <li>Review content depth and completeness.</li>
+      <li>Make the final decision through human review.</li>
+    </ol>
+
+    <h3>Action categories</h3>
+
+    <ul>
+      <li><code>STALE_CONTENT</code> — long time since the last update.</li>
+      <li><code>SEARCH_POSITION</code> — weaker search position.</li>
+      <li><code>LOW_ENGAGEMENT</code> — relatively low engagement.</li>
+      <li><code>CONTENT_DEPTH</code> — relatively low content depth.</li>
+      <li><code>MODEL_RISK</code> — elevated model-based decline risk.</li>
+    </ul>
+
+    <p>
+      The ML-10 action queue contains the <strong>top 50 ranked pages</strong>
+      for review.
+    </p>
+
+    <div class="warning">
+      Pages should not be automatically deleted, redirected, rewritten, or
+      published solely because of the model score.
+    </div>
+  </section>
+
+
+  <section>
+    <h2>8. Reproducibility</h2>
+
+    <p>
+      The analysis is organized in the <code>work/</code> directory of the
+      MLflyrank repository.
+    </p>
+
+    <ul>
+      <li><code>work/notebooks/</code> — weekly analysis notebooks.</li>
+      <li><code>work/capstone.ipynb</code> — final capstone analysis.</li>
+      <li><code>work/capstone_report.md</code> — full report.</li>
+      <li><code>work/capstone_report_template.md</code> — report template.</li>
+      <li><code>work/figures/</code> — analysis figures.</li>
+      <li><code>work/outputs/</code> — generated outputs and metrics.</li>
+    </ul>
+
+    <p>
+      The main model evaluation uses an 80/20 stratified split with
+      <strong>random state 42</strong>. A separate client-grouped validation
+      design was used to evaluate generalization to unseen clients.
+    </p>
+
+    <p>
+      The feature-level leakage audit confirmed that
+      <code>trend_direction</code>, <code>trend_pct</code>, and
+      <code>target</code> were excluded from the model features.
+    </p>
+
+    <p>
+      The reported results should be reproduced from the notebooks and
+      repository artifacts rather than treated as independently verified
+      production results.
+    </p>
+  </section>
+
+
+  <section>
+    <h2>9. Acknowledgments &amp; Data Credit</h2>
+
+    <p>
+      This work was completed as part of the FlyRank ML Internship Machine
+      Learning track.
+    </p>
+
+    <p>
+      Built on the
+      <a href="https://flyrank.ai" target="_blank" rel="noopener">
+        FlyRank ML Internship dataset
+      </a>.
+    </p>
+
+    <p>
+      The analysis follows the public-safe requirements of the internship and
+      does not include client names, private search queries, credentials, or
+      other client-identifying information.
+    </p>
+  </section>
+
+
+  <footer>
+    <p>
+      FlyRank ML Internship · Machine Learning Track · Content Refresh /
+      Opportunity Scoring
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>
