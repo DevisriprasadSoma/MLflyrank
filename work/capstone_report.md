@@ -333,3 +333,11 @@ The final outputs include:
 - Model and validation figures
 
 The reported results should be reproduced from the notebooks and repository artifacts rather than treated as independently verified production results.
+
+## 9. Acknowledgments & Data Credit
+
+This work was completed as part of the FlyRank ML Internship Machine Learning track.
+
+Built on the [FlyRank ML Internship dataset](https://flyrank.ai).
+
+The analysis follows the public-safe requirements of the internship and does not include client names, private search queries, credentials, or other client-identifying information.
